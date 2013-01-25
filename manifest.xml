@@ -1,0 +1,18 @@
+<package>
+  <description brief="vision_3d">
+
+     pcl_features
+
+  </description>
+  <author>Pablo</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/vision_3d</url>
+  <depend package="roscpp"/>
+  <depend package="rospy"/>
+  <depend package="pcl"/>
+  <depend package="pcl_ros"/>
+
+</package>
+
+
