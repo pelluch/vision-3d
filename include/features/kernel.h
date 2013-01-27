@@ -1,0 +1,3 @@
+#ifndef KERNEL_DESCRIPTOR_H
+#define KERLEL_DESCRIPTOR_H
+#endif

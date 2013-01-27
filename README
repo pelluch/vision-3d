@@ -1,0 +1,44 @@
+vision_3d
+=========
+
+ROS Stack used for 3D vslam and object detection algorithms.
+I will add object recognition algorithms which use RGB-D information for use with robotics.
+
+Pre-requisites
+=========
+opencv2 (tested with 2.4.2, comes with ros-fuerte-desktop-full)
+pcl (tested with 1.5.1, comes with ros-fuerte-desktop-full)
+openni_launch ROS Stack for fuerte which includes OpenNI driver (comes with ros-fuerte-desktop-full)
+pcl_ros (comes with ros-fuerte-desktop-full)
+
+TODO
+=========
+
+Feature Extraction:
+
+	-Implement SURF3D descriptor
+	-Implement SIFT3D detector and descriptor
+	-Implement SURFLET descriptor
+	-Implement Kernel descriptors
+
+MISC:
+
+	-Add functionality to convert RGB-D images to point clouds and vice-versa
+
+Saliency Maps:
+
+	-Research and implement 2D and 3D saliency maps for attention focusing
+	-Maybe use saliency_detector ROS STACK
+	-3D cues with IKN Maps
+	-3D saliency maps by Pirri et al
+	
+
+Classifiers:
+
+	-Implement SVM classifier for training (using libSVM, probably) with different kernels
+	-Implement adaboost classifier
+	-Experiment with part-based object detection
+
+Object detection:
+
+	-Implement node for detecting certain types of objects using RGB-D data from kinect
