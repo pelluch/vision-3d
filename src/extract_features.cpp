@@ -6,81 +6,103 @@
 #include <pcl/features/normal_3d.h>
 #include <pcl/io/pcd_io.h>
 #include <boost/thread/thread.hpp>
-#include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/filters/voxel_grid.h>
+#include <visualization.h>
+#include <pcl/keypoints/sift_keypoint.h>
 
 int numCallbacks;
 
+//Should be moved to different file
+void detectKeypoints(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr keypoints)
+{
+  pcl::SIFTKeypoint<pcl::PointXYZRGB, pcl::PointXYZRGB> sift_detector;
+  sift_detector.setInputCloud(cloud);
+  sift_detector.setScales(0.2f, 3, 3);
+  sift_detector.compute(*keypoints);
+  //sift_detector.setInputCloud(*cloud);
+  ROS_INFO("Keypoints detected");
+
+}
+void downSample(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr output)
+{
+  pcl::VoxelGrid<pcl::PointXYZRGB> ds;
+  ds.setInputCloud(cloud);
+  ds.setLeafSize(0.005f, 0.005f, 0.005f);
+  ds.filter(*output);
+  ROS_INFO("Old cloud size: %d\n New cloud size: %d", cloud->width*cloud->height, output->width*output->height);
+}
+
 void estimateNormals(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::Normal>::Ptr normals)
 {
-		// Create the normal estimation class, and pass the input dataset to it
-	  pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
-	  ne.setInputCloud (cloud);
-    ROS_INFO("Set input cloud in normal estimator");
-	  // Create an empty kdtree representation, and pass it to the normal estimation object.
-	  // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
-	  pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
-	  ne.setSearchMethod (tree);
+  // Create the normal estimation class, and pass the input dataset to it
+  pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
+  ne.setInputCloud (cloud);
+  ROS_INFO("Set input cloud in normal estimator");
+  // Create an empty kdtree representation, and pass it to the normal estimation object.
+  // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+  pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
+  ne.setSearchMethod (tree);
 
-	  // Use all neighbors in a sphere of radius 3cm
-  	ne.setRadiusSearch (0.03);
-    ROS_INFO("Computing normals...");
-    ne.compute(*normals);
+  // Use all neighbors in a sphere of radius 3cm
+  ne.setRadiusSearch (0.03);
+  ROS_INFO("Computing normals...");
+  ne.compute(*normals);
+  ROS_INFO("Normals computed..");
 
 }
 
 void XYZRGBCallback(const sensor_msgs::PointCloud2::ConstPtr& cloud)
 {
-	   ROS_INFO("Received XYZRGB point cloud");
-	   //pcl::PointCloud<pcl::PointXYZ>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZ>);
-  	 pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal> ());
-     pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-     pcl::fromROSMsg(*cloud, *pclCloud);
-     estimateNormals(pclCloud, normals);
-     //std::stringstream fileName;
-     //fileName << "/home/pablo/Desktop/PCD/" << numCallbacks << ".pcd";
-     //pcl::io::savePCDFile(fileName.str(), *normals);
-     numCallbacks++;
-     boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-     viewer->setBackgroundColor (0, 0, 0);
-     pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pclCloud);
-    viewer->addPointCloud<pcl::PointXYZRGB> (pclCloud, rgb, "sample cloud");
-    viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 3, "sample cloud");
-   viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal> (pclCloud, normals, 10, 0.05, "normals");
-    viewer->addCoordinateSystem (1.0);
-   viewer->initCameraParameters ();
-  	//  // Create the FPFH estimation class, and pass the input dataset+normals to it
-  	 pcl::FPFHEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::FPFHSignature33> fpfh;
- 	   fpfh.setInputCloud (pclCloud);
-  	 fpfh.setInputNormals (normals);
+  ROS_INFO("Received XYZRGB point cloud");
+  //Creating PCL format point clouds and normals
+  pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal> ());
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloud(new pcl::PointCloud<pcl::PointXYZRGB>());
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr dsCloud(new pcl::PointCloud<pcl::PointXYZRGB>());
+  pcl::PointCloud<pcl::PointXYZRGB>::Ptr keypoints(new pcl::PointCloud<pcl::PointXYZRGB>());
+  pcl::fromROSMsg(*cloud, *pclCloud);
+  detectKeypoints(pclCloud, keypoints);
+  //Visualizing the cloud for debugging reasons.
+  //visualizePointCloud(pclCloud);
+  downSample(pclCloud, dsCloud);
+  ROS_INFO("PCL downsampled");
+  estimateNormals(dsCloud, normals);
 
-  	// // Create an empty kdtree representation, and pass it to the FPFH estimation object.
- 	 //  // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
-  	pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
+  //Visualizing point cloud normals
+  vision_3d::visualizePointCloudNormals(dsCloud, normals);
+  numCallbacks++;
 
-  	 fpfh.setSearchMethod (tree);
 
-  	// // Output datasets
-  	 pcl::PointCloud<pcl::FPFHSignature33>::Ptr fpfhs (new pcl::PointCloud<pcl::FPFHSignature33> ());
+  ROS_INFO("Computing FPFHE");
 
-  	// // Use all neighbors in a sphere of radius 5cm
-  	// // IMPORTANT: the radius used here has to be larger than the radius used to estimate the surface normals!!!
-  	 fpfh.setRadiusSearch (0.08);
+  // Create the FPFH estimation class, and pass the input dataset+normals to it
+  pcl::FPFHEstimation<pcl::PointXYZRGB, pcl::Normal, pcl::FPFHSignature33> fpfh;
+  fpfh.setInputCloud (dsCloud);
+  fpfh.setInputNormals (normals);
 
-  	// // Compute the features
-  	 fpfh.compute (*fpfhs);
-     while (!viewer->wasStopped ())
-    {
-      viewer->spinOnce (100);
-      boost::this_thread::sleep (boost::posix_time::microseconds (100000));
-    }
+  // Create an empty kdtree representation, and pass it to the FPFH estimation object.
+  // Its content will be filled inside the object, based on the given input dataset (as no other search surface is given).
+  pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB>);
+
+  fpfh.setSearchMethod (tree);
+
+  // Output datasets
+  pcl::PointCloud<pcl::FPFHSignature33>::Ptr fpfhs (new pcl::PointCloud<pcl::FPFHSignature33> ());
+
+  // Use all neighbors in a sphere of radius 5cm
+  // IMPORTANT: the radius used here has to be larger than the radius used to estimate the surface normals!!!
+  fpfh.setRadiusSearch (0.1);
+
+  // Compute the features
+  fpfh.compute (*fpfhs);
+  ROS_INFO("Finished");
 }
 
 int main(int argc, char ** argv)
 {
-	ros::init(argc, argv, "extract_features");
-	ros::NodeHandle nh;
+  ros::init(argc, argv, "extract_features");
+  ros::NodeHandle nh;
   numCallbacks = 0;
-	ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth_registered/points", 100, XYZRGBCallback);
+  ros::Subscriber sub = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth_registered/points", 100, XYZRGBCallback);
   ros::spin();
-	return 0;
+  return 0;
 }
