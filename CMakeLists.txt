@@ -29,7 +29,23 @@ rosbuild_add_boost_directories()
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 
-rosbuild_add_executable(extract_features src/extract_features.cpp src/visualization.cpp src/features/normal.cpp src/features/surflet.cpp src/util/util.cpp)
-rosbuild_link_boost(extract_features system)
-target_link_libraries(extract_features libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
+rosbuild_add_executable(test src/test.cpp src/visualization.cpp src/features/normal.cpp src/features/surflet.cpp src/util/util.cpp)
+rosbuild_link_boost(test system)
+target_link_libraries(test libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
+
 rosbuild_add_executable(detect_keypoints src/detect_keypoints.cpp src/keypoints/sift_extractor.cpp)
+
+rosbuild_add_executable(correspondence_grouping src/correspondence_grouping.cpp)
+rosbuild_link_boost(correspondence_grouping system)
+target_link_libraries(correspondence_grouping libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
+
+rosbuild_add_executable(correspondence_detection src/correspondence_detection.cpp)
+rosbuild_link_boost(correspondence_detection system)
+target_link_libraries(correspondence_detection libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
+
+rosbuild_add_executable(extract_narf src/extract_narf.cpp src/keypoints/narf.cpp)
+rosbuild_link_boost(extract_narf system)
+target_link_libraries(extract_narf libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
+
+rosbuild_add_executable(save_clouds src/save_clouds.cpp)
+rosbuild_link_boost(save_clouds system)
