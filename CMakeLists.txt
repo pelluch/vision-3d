@@ -29,5 +29,7 @@ include_directories(/usr/include/vtk-5.8)
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 
-rosbuild_add_executable(extract_features src/extract_features.cpp)
+rosbuild_add_executable(extract_features src/extract_features.cpp src/visualization.cpp src/features/normal.cpp src/features/surflet.cpp src/util/util.cpp)
 target_link_libraries(extract_features ${PCL_LIBRARIES} libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
+
+rosbuild_add_executable(detect_keypoints src/detect_keypoints.cpp src/keypoints/sift_extractor.cpp)
