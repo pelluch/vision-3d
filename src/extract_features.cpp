@@ -1,13 +1,13 @@
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
-#include <pcl/point_types.h>
-#include <pcl/features/fpfh.h>
+#include <pcl17/point_types.h>
+#include <pcl17/features/fpfh.h>
 #include <pcl_ros/point_cloud.h>
-#include <pcl/io/pcd_io.h>
+#include <pcl17/io/pcd_io.h>
 #include <boost/thread/thread.hpp>
-#include <pcl/filters/voxel_grid.h>
+#include <pcl17/filters/voxel_grid.h>
 #include <visualization.h>
-#include <pcl/keypoints/sift_keypoint.h>
+#include <pcl17/keypoints/sift_keypoint.h>
 #include <features/normal.h>
 #include <features/surflet.h>
 #include <util/util.h>
@@ -19,17 +19,17 @@ int numCallbacks;
 void XYZRGBCallback(const sensor_msgs::PointCloud2::ConstPtr& cloud)
 {
   ROS_INFO("Received XYZRGB point cloud");
-  //Creating PCL format point clouds and normals
-  pcl::PointCloud<pcl::Normal>::Ptr normals (new pcl::PointCloud<pcl::Normal> ());
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr dsCloud(new pcl::PointCloud<pcl::PointXYZRGB>());
-  pcl::PointCloud<pcl::PointXYZRGB>::Ptr keypoints(new pcl::PointCloud<pcl::PointXYZRGB>());
-  pcl::fromROSMsg(*cloud, *pclCloud);
-  //detectKeypoints(pclCloud, keypoints);
+  //Creating pcl17 format point clouds and normals
+  pcl17::PointCloud<pcl17::Normal>::Ptr normals (new pcl17::PointCloud<pcl17::Normal> ());
+  pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr pcl17Cloud(new pcl17::PointCloud<pcl17::PointXYZRGB>());
+  pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr dsCloud(new pcl17::PointCloud<pcl17::PointXYZRGB>());
+  pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr keypoints(new pcl17::PointCloud<pcl17::PointXYZRGB>());
+  pcl17::fromROSMsg(*cloud, *pcl17Cloud);
+  //detectKeypoints(pcl17Cloud, keypoints);
   //Visualizing the cloud for debugging reasons.
-  //visualizePointCloud(pclCloud);
-  vision_3d::util::downSample(pclCloud, dsCloud);
-  ROS_INFO("PCL downsampled");
+  //visualizePointCloud(pcl17Cloud);
+  vision_3d::util::downSample(pcl17Cloud, dsCloud);
+  ROS_INFO("pcl17 downsampled");
 
   vision_3d::NormalEstimator estimator;
   estimator.estimateNormals(dsCloud, normals);
@@ -42,7 +42,7 @@ void XYZRGBCallback(const sensor_msgs::PointCloud2::ConstPtr& cloud)
 
   // Output datasets
   vision_3d::SurfletExtractor surflets;
-  pcl::PointCloud<pcl::FPFHSignature33>::Ptr fpfhs (new pcl::PointCloud<pcl::FPFHSignature33> ());
+  pcl17::PointCloud<pcl17::FPFHSignature33>::Ptr fpfhs (new pcl17::PointCloud<pcl17::FPFHSignature33> ());
   surflets.extractSurflets(dsCloud, normals, fpfhs);
 
   ROS_INFO("Finished");

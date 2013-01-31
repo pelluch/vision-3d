@@ -10,7 +10,7 @@
   <url>http://ros.org/wiki/vision_3d</url>
   <depend package="roscpp"/>
   <depend package="rospy"/>
-  <depend package="pcl"/>
+  <depend package="pcl17"/>
   <depend package="pcl_ros"/>
 
 </package>

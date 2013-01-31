@@ -10,11 +10,11 @@ namespace vision_3d
 		isNeighbourSearch_ = false;
 	}
 
-	void vision_3d::NormalEstimator::estimateNormals(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::Normal>::Ptr normals)
+	void vision_3d::NormalEstimator::estimateNormals(pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr cloud, pcl17::PointCloud<pcl17::Normal>::Ptr normals)
 	{
-		pcl::NormalEstimation<pcl::PointXYZRGB, pcl::Normal> ne;
+		pcl17::NormalEstimation<pcl17::PointXYZRGB, pcl17::Normal> ne;
 		ne.setInputCloud (cloud);
-		pcl::search::KdTree<pcl::PointXYZRGB>::Ptr tree (new pcl::search::KdTree<pcl::PointXYZRGB> ());
+		pcl17::search::KdTree<pcl17::PointXYZRGB>::Ptr tree (new pcl17::search::KdTree<pcl17::PointXYZRGB> ());
 	  	ne.setSearchMethod (tree);
 	  	ne.compute(*normals);
 	}

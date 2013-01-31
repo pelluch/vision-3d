@@ -4,7 +4,7 @@ namespace vision_3d
 {
 	SiftExtractor::SiftExtractor()
 	{
-		extractor_ = new pcl::SIFTKeypoint<pcl::PointXYZRGB, pcl::PointWithScale>();
+		extractor_ = new pcl17::SIFTKeypoint<pcl17::PointXYZRGB, pcl17::PointWithScale>();
 	}
 
 	void 
@@ -20,7 +20,7 @@ namespace vision_3d
 
 	//Should be moved to different file
 	void
-	SiftExtractor::detectKeypoints(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, pcl::PointCloud<pcl::PointWithScale>::Ptr keypoints)
+	SiftExtractor::detectKeypoints(pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr cloud, pcl17::PointCloud<pcl17::PointWithScale>::Ptr keypoints)
 	{
 	  extractor_->setInputCloud(cloud);
 	  extractor_->setScales(min_scale_, nr_octaves_, nr_scales_per_octave_);

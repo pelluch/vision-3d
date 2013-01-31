@@ -1,8 +1,8 @@
 #ifndef KEYPOINTS_KEYPOINT_EXTRACTOR_H_
 #define KEYPOINTS_KEYPOINT_EXTRACTOR_H_
 
-#include <pcl/point_types.h>
-#include <pcl/keypoints/keypoint.h>
+#include <pcl17/point_types.h>
+#include <pcl17/keypoints/keypoint.h>
 
 class KeypointExtractor
 {

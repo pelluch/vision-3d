@@ -21,15 +21,15 @@ set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
 #uncomment if you have defined services
 #rosbuild_gensrv()
 include_directories(/usr/include/vtk-5.8)
-
 #common commands for building c++ executables and libraries
 #rosbuild_add_library(${PROJECT_NAME} src/example.cpp)
 #target_link_libraries(${PROJECT_NAME} another_library)
-#rosbuild_add_boost_directories()
+rosbuild_add_boost_directories()
+
 #rosbuild_link_boost(${PROJECT_NAME} thread)
 #rosbuild_add_executable(example examples/example.cpp)
 
 rosbuild_add_executable(extract_features src/extract_features.cpp src/visualization.cpp src/features/normal.cpp src/features/surflet.cpp src/util/util.cpp)
-target_link_libraries(extract_features ${PCL_LIBRARIES} libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
-
+rosbuild_link_boost(extract_features system)
+target_link_libraries(extract_features libvtkCommon.so libvtkFiltering.so libvtkRendering.so)
 rosbuild_add_executable(detect_keypoints src/detect_keypoints.cpp src/keypoints/sift_extractor.cpp)

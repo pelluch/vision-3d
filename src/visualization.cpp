@@ -4,14 +4,14 @@
 
 namespace vision_3d
 {
-	void visualizePointCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloud)
+	void visualizePointCloud(pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr pclCloud)
 	{
-		boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+		boost::shared_ptr<pcl17::visualization::PCLVisualizer> viewer (new pcl17::visualization::PCLVisualizer ("3D Viewer"));
 		viewer->setBackgroundColor (0, 0, 0);
-		pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pclCloud);
-		viewer->addPointCloud<pcl::PointXYZRGB> (pclCloud, rgb, "sample cloud");
-		viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 5, "sample cloud");
-  		//viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal> (pclCloud, normals, 10, 0.05, "normals");
+		pcl17::visualization::PointCloudColorHandlerRGBField<pcl17::PointXYZRGB> rgb(pclCloud);
+		viewer->addPointCloud<pcl17::PointXYZRGB> (pclCloud, rgb, "sample cloud");
+		viewer->setPointCloudRenderingProperties (pcl17::visualization::PCL17_VISUALIZER_POINT_SIZE, 5, "sample cloud");
+  		//viewer->addPointCloudNormals<pcl17::PointXYZRGB, pcl17::Normal> (pclCloud, normals, 10, 0.05, "normals");
 		viewer->addCoordinateSystem (1.0);
 		viewer->initCameraParameters ();
 		ROS_INFO("Viewer ready.");
@@ -22,14 +22,14 @@ namespace vision_3d
 		}
 	}
 
-	void visualizePointCloudNormals(pcl::PointCloud<pcl::PointXYZRGB>::Ptr pclCloud, pcl::PointCloud<pcl::Normal>::Ptr normals)
+	void visualizePointCloudNormals(pcl17::PointCloud<pcl17::PointXYZRGB>::Ptr pclCloud, pcl17::PointCloud<pcl17::Normal>::Ptr normals)
 	{
-		boost::shared_ptr<pcl::visualization::PCLVisualizer> viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
+		boost::shared_ptr<pcl17::visualization::PCLVisualizer> viewer (new pcl17::visualization::PCLVisualizer ("3D Viewer"));
 		viewer->setBackgroundColor (0, 0, 0);
-		pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pclCloud);
-		viewer->addPointCloud<pcl::PointXYZRGB> (pclCloud, rgb, "sample cloud");
-		viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 5, "sample cloud");
-		viewer->addPointCloudNormals<pcl::PointXYZRGB, pcl::Normal> (pclCloud, normals, 10, 0.05, "normals");
+		pcl17::visualization::PointCloudColorHandlerRGBField<pcl17::PointXYZRGB> rgb(pclCloud);
+		viewer->addPointCloud<pcl17::PointXYZRGB> (pclCloud, rgb, "sample cloud");
+		viewer->setPointCloudRenderingProperties (pcl17::visualization::PCL17_VISUALIZER_POINT_SIZE, 5, "sample cloud");
+		viewer->addPointCloudNormals<pcl17::PointXYZRGB, pcl17::Normal> (pclCloud, normals, 10, 0.05, "normals");
 		viewer->addCoordinateSystem (1.0);
 		viewer->initCameraParameters ();
 		ROS_INFO("Viewer ready.");
